@@ -67,10 +67,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	switch (message) {
 	case WM_PAINT:
-		hdc = BeginPaint(hwnd, &ps);
+		hdc = BeginPaint(hwnd, &ps); // párové funkcie ktoré musia byť pri obsluhe správy
 		GetClientRect(hwnd, &rect);
 		DrawText(hdc, "AHOJ WINDOWS !!! ", -1, &rect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
-		EndPaint(hwnd, &ps);
+		EndPaint(hwnd, &ps);		// párová funkcia ktorá musí byť pri obsluhe správy
 		break;
 
 	case WM_DESTROY:
