@@ -1,7 +1,7 @@
 ﻿// Zakladna aplikacia
 
-#include <windows.h>
-#include <windowsx.h>
+#include <windows.h> // staršia knižnica
+#include <windowsx.h>  // novšia verzia
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
@@ -10,7 +10,7 @@ TCHAR szWinName[] = "MojeOkno"; 		// Nazov oknovej triedy , toto automaticky win
 
 int APIENTRY WinMain(HINSTANCE hThisInst, HINSTANCE hPrevInst, PSTR lpszArgs, int nWinMode)
 {
-	HWND        	hwnd;
+	HWND        	hwnd;			//popisovač okna H - handle
 	MSG         	msg;
 	WNDCLASSEX    	wndclass;
 
@@ -29,11 +29,11 @@ int APIENTRY WinMain(HINSTANCE hThisInst, HINSTANCE hPrevInst, PSTR lpszArgs, in
 	wndclass.cbClsExtra = 0;          	// nie su potrebne
 	wndclass.cbWndExtra = 0;          	// ziadne extra informacie
 
-	wndclass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);	// Biele pozadie alebo (HBRUSH)(COLOR_WINDOW+1)
+	wndclass.hbrBackground = (HBRUSH)GetStockObject(COLOR_WINDOW + 1);	// Biele pozadie alebo (HBRUSH)(COLOR_WINDOW+1) použie sa farba z win
 
 	RegisterClassEx(&wndclass);            // Registracia okna
 										   // Po registracii vytvorenie okna
-	hwnd = CreateWindowEx(
+	hwnd = CreateWindowEx(	
 		WS_EX_ACCEPTFILES,
 		szWinName,           // Nazov oknovej triedy
 		"Windows - zakladny program",  // Titulok okna
