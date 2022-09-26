@@ -5,7 +5,7 @@
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
-char szWinName[] = "MojeOkno"; 		// Nazov oknovej triedy
+TCHAR szWinName[] = "MojeOkno"; 		// Nazov oknovej triedy, lesie ako char lebo ked to win zmeni tak tchar mi to automaticky preformátuje
 
 int APIENTRY WinMain(HINSTANCE hThisInst, HINSTANCE hPrevInst, PSTR lpszArgs, int nWinMode)
 {
