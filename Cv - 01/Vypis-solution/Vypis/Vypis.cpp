@@ -2,6 +2,7 @@
 
 #include <windows.h> // staršia knižnica
 #include <windowsx.h>  // novšia verzia
+#include <stdio.h>
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
@@ -65,11 +66,24 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	PAINTSTRUCT ps;
 	RECT	  rect;
 
+	static int xPos = 0, yPos = 0;	//musia byť static, aby boli označené ako globálne, lebo mi z WM_MOUSEMOVE vyskakujeme a ked by neboli označené ako static tak sa zakaždym vynulujú
+
+	char buf[100];
+
 	switch (message) {
+	case WM_MOUSEMOVE:
+		xPos = GET_X_LPARAM(lParam);	//ziskam informácie o polohe myši, ms doc viac info
+		yPos = GET_Y_LPARAM(lParam);
+		InvalidateRect(hwnd, NULL, true); // vynútim prekreslenie okna, keď by som miesto true dal false, tak by mi to neprekreslovalo celé
+
+		break;
+
 	case WM_PAINT:
 		hdc = BeginPaint(hwnd, &ps); // párové funkcie ktoré musia byť pri obsluhe správy
 		GetClientRect(hwnd, &rect);
-		DrawText(hdc, "AHOJ WINDOWS !!! ", -1, &rect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+		wsprintf(buf, "%d, %d", xPos, yPos);	//konvertujem int na char cez buffer
+		//DrawText(hdc, "AHOJ WINDOWS !!! ", -1, &rect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+		DrawText(hdc, buf, -1, &rect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
 		EndPaint(hwnd, &ps);		// párová funkcia ktorá musí byť pri obsluhe správy
 		break;
 
@@ -77,7 +91,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		PostQuitMessage(0);
 		break;
 	default:
-		return DefWindowProc(hwnd, message, wParam, lParam);
+		return DefWindowProc(hwnd, message, wParam, lParam); // správy ktoré ma nezaujímaju, pošlem naspeť do systému
 	}
 	return 0;
 }
