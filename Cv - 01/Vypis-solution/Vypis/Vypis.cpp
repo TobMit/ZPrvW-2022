@@ -30,7 +30,8 @@ int APIENTRY WinMain(HINSTANCE hThisInst, HINSTANCE hPrevInst, PSTR lpszArgs, in
 	wndclass.cbClsExtra = 0;          	// nie su potrebne
 	wndclass.cbWndExtra = 0;          	// ziadne extra informacie
 
-	wndclass.hbrBackground = (HBRUSH)GetStockObject(COLOR_WINDOW + 1);	// Biele pozadie alebo (HBRUSH)(COLOR_WINDOW+1) použie sa farba z win
+	//wndclass.hbrBackground = (HBRUSH)GetStockObject(COLOR_WINDOW + 1);	// Biele pozadie alebo (HBRUSH)(COLOR_WINDOW+1) použie sa farba z win
+	wndclass.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 
 	RegisterClassEx(&wndclass);            // Registracia okna
 										   // Po registracii vytvorenie okna
