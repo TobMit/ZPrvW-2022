@@ -1,11 +1,12 @@
-// Zakladna aplikacia
+﻿// Zakladna aplikacia
 
 #include <windows.h>
 #include <windowsx.h>
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
-char szWinName[] = "MojeOkno"; 		// Nazov oknovej triedy
+//char szWinName[] = "MojeOkno"; 		// staré označovanie
+TCHAR szWinName[] = "MojeOkno"; 		// Nazov oknovej triedy , toto automaticky windows preroí na char
 
 int APIENTRY WinMain(HINSTANCE hThisInst, HINSTANCE hPrevInst, PSTR lpszArgs, int nWinMode)
 {

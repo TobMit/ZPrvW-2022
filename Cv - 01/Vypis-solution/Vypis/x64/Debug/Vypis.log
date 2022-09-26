@@ -1,3 +1,3 @@
 ﻿  Vypis.cpp
-C:\Users\tobias\Desktop\ZPrvW\ZPrvW-2022\Cv - 01\Vypis-solution\Vypis\Vypis.cpp(57,12): warning C4244: 'return': conversion from 'WPARAM' to 'int', possible loss of data
+C:\Users\tobias\Desktop\ZPrvW\ZPrvW-2022\Cv - 01\Vypis-solution\Vypis\Vypis.cpp(58,12): warning C4244: 'return': conversion from 'WPARAM' to 'int', possible loss of data
   Vypis.vcxproj -> C:\Users\tobias\Desktop\ZPrvW\ZPrvW-2022\Cv - 01\Vypis-solution\x64\Debug\Vypis.exe
