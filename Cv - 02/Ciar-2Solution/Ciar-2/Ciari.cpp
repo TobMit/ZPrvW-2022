@@ -94,6 +94,16 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			SetPixel(hdc, body[i].x, body[i].y, RGB(0, 0, 0));
 		}
+		for (int i = 0; i < POCET_BODOV - 1; i++)
+		{
+			for (int j = 0; j < POCET_BODOV; j++)
+			{
+				MoveToEx(hdc, body[i].x, body[i].y, nullptr);
+				LineTo(hdc, body[j].x, body[j].y);
+			}
+			
+		
+		}
 
 		EndPaint(hwnd, &ps);
 		break;
