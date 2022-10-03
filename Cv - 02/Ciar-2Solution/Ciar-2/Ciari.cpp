@@ -70,7 +70,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	int sirka, vyska;
 
 	switch (message) {
-	case WM_SIZE: 
+	case WM_SIZE:
 		vyska = HIWORD(lParam);
 		sirka = LOWORD(lParam);
 		if (vyska > 0 && sirka > 0) {
@@ -83,7 +83,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		break;
 	case WM_CREATE:
-		for (int i = 0; i< POCET_BODOV; i++){
+		for (int i = 0; i < POCET_BODOV; i++) {
 			body[i].x = 0;
 			body[i].y = 0;
 		}
@@ -94,7 +94,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			SetPixel(hdc, body[i].x, body[i].y, RGB(0, 0, 0));
 		}
-		
+
 		EndPaint(hwnd, &ps);
 		break;
 
