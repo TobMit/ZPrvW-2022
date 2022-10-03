@@ -84,6 +84,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 		}
 
+		InvalidateRect(hwnd, NULL, true);
+
 		break;
 	case WM_CREATE:
 		srand(time(nullptr));
