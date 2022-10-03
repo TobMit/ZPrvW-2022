@@ -16,7 +16,7 @@ int APIENTRY WinMain(HINSTANCE hThisInst, HINSTANCE hPrevInst, PSTR lpszArgs, in
 	WNDCLASSEX    	wndclass;
 
 	wndclass.cbSize = sizeof(WNDCLASSEX);
-	wndclass.style = 0;          	// Implicitny styl
+	wndclass.style = CS_HREDRAW | CS_VREDRAW; //pri zmene okna sa to automaticky prekresli         	// Implicitny styl
 	wndclass.lpfnWndProc = WndProc; 	// Oknova funkcia
 	wndclass.hInstance = hThisInst;  	// Popisovac tejto instancie
 	wndclass.lpszClassName = szWinName;  	// Nazov oknovej triedy
@@ -84,7 +84,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 		}
 
-		InvalidateRect(hwnd, NULL, true);
+		//InvalidateRect(hwnd, NULL, true); // nemusí sa dávať keď je do windows style pridane cs atributy na prekreslenie
 
 		break;
 	case WM_CREATE:
@@ -107,11 +107,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			for (int j = 0; j < POCET_BODOV; j++)
 			{
 				pero = CreatePen(PS_SOLID, 1, RGB(rand() % 255, rand() % 255, rand() % 255)); //keď vytváram pero tak musíme zrušiť
-				povodnePero = (HPEN)SelectObject(hdc, pero);
+				povodnePero = (HPEN)SelectObject(hdc, pero); // implicitne je pôvodne pero čierne
+				// keď chem meniť fabu pera, tak to musím nahradiť nejakým iným perom
 
 				MoveToEx(hdc, body[i].x, body[i].y, nullptr);
 				LineTo(hdc, body[j].x, body[j].y);
-				SelectObject(hdc, povodnePero); //aby sa vrátila farba 
+				SelectObject(hdc, povodnePero); //aby sa vrátila farba naspeť pôvodnemu peru
 				DeleteObject(pero);
 			}
 			
