@@ -112,7 +112,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 				MoveToEx(hdc, body[i].x, body[i].y, nullptr);
 				LineTo(hdc, body[j].x, body[j].y);
-				SelectObject(hdc, povodnePero); //aby sa vrátila farba naspeť pôvodnemu peru
+				SelectObject(hdc, povodnePero); //aby sa vrátila farba naspeť pôvodnemu peru, aby sme to pero mohli vymazať
+				//nesmieme mazať objekt ktorý je vybratý, preto to pero nahráme pôvodnePero
 				DeleteObject(pero);
 			}
 			
