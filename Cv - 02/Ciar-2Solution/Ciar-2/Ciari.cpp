@@ -1,4 +1,4 @@
-// Zakladna aplikacia
+﻿// Zakladna aplikacia
 
 #include <windows.h>
 #include <windowsx.h>
@@ -68,6 +68,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	RECT	  rect;
 	static POINT body[POCET_BODOV]; //sturktura xy
 	int sirka, vyska;
+	static HPEN pero;
+	HPEN povodnePero;
+
 
 	switch (message) {
 	case WM_SIZE:
@@ -83,10 +86,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		break;
 	case WM_CREATE:
+		srand(time(nullptr));
 		for (int i = 0; i < POCET_BODOV; i++) {
 			body[i].x = 0;
 			body[i].y = 0;
 		}
+		pero = CreatePen(PS_SOLID, 1, RGB(255, 0, 0)); //keď vytváram pero tak musíme zrušiť
 		break;
 	case WM_PAINT:
 		hdc = BeginPaint(hwnd, &ps);
@@ -94,6 +99,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			SetPixel(hdc, body[i].x, body[i].y, RGB(0, 0, 0));
 		}
+		povodnePero = (HPEN)SelectObject(hdc, pero);
 		for (int i = 0; i < POCET_BODOV - 1; i++)
 		{
 			for (int j = 0; j < POCET_BODOV; j++)
@@ -105,11 +111,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		
 		}
 
+		SelectObject(hdc, povodnePero); //aby sa vrátila farba 
 		EndPaint(hwnd, &ps);
 		break;
 
 	case WM_DESTROY:
 		PostQuitMessage(0);
+		DeleteObject(pero); // musíme ho zrušiť aby sme uvolnili operačnú pamäť
 		break;
 	default:
 		return DefWindowProc(hwnd, message, wParam, lParam);
