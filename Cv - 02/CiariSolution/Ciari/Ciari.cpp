@@ -2,10 +2,11 @@
 
 #include <windows.h>
 #include <windowsx.h>
+#include <cstdlib>
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
-char szWinName[] = "MojeOkno"; 		// Nazov oknovej triedy
+char szWinName[] = "Ciary"; 		// Nazov oknovej triedy
 
 int APIENTRY WinMain(HINSTANCE hThisInst, HINSTANCE hPrevInst, PSTR lpszArgs, int nWinMode)
 {
@@ -28,7 +29,7 @@ int APIENTRY WinMain(HINSTANCE hThisInst, HINSTANCE hPrevInst, PSTR lpszArgs, in
 	wndclass.cbClsExtra = 0;          	// nie su potrebne
 	wndclass.cbWndExtra = 0;          	// ziadne extra informacie
 
-	wndclass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);	// Biele pozadie alebo (HBRUSH)(COLOR_WINDOW+1)
+	wndclass.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 
 	RegisterClassEx(&wndclass);            // Registracia okna
 										   // Po registracii vytvorenie okna
@@ -60,11 +61,28 @@ int APIENTRY WinMain(HINSTANCE hThisInst, HINSTANCE hPrevInst, PSTR lpszArgs, in
 // Tuto funkciu vola Windows - prenasa do nej spravy z fronty sprav
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+	const int POCET_BODOV = 100;
 	HDC hdc;
 	PAINTSTRUCT ps;
 	RECT	  rect;
+	POINT body[POCET_BODOV]; //sturktura xy
+	int sirka, vyska;
 
 	switch (message) {
+	case WM_SIZE: 
+		vyska = HIWORD(lParam);
+		sirka = LOWORD(lParam);
+		if (vyska > 0 && sirka >0) {
+			
+		}
+
+		break;
+	case WM_CREATE:
+		for (int i = 0; i< POCET_BODOV; i++){
+			body[i].x = 0;
+			body[i].y = 0;
+		}
+		break;
 	case WM_PAINT:
 		hdc = BeginPaint(hwnd, &ps);
 		GetClientRect(hwnd, &rect);
