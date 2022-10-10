@@ -36,7 +36,7 @@ int APIENTRY WinMain(HINSTANCE hThisInst, HINSTANCE hPrevInst, PSTR lpszArgs, in
 		WS_EX_ACCEPTFILES,
 		szWinName,           // Nazov oknovej triedy
 		"Windows - zakladny program",  // Titulok okna
-		WS_OVERLAPPEDWINDOW, // Styl okna
+		WS_OVERLAPPEDWINDOW | WS_HSCROLL | WS_VSCROLL, // Styl okna
 		CW_USEDEFAULT,       // Pociatocna x-poloha
 		CW_USEDEFAULT,       // Pociatocna y-poloha
 		CW_USEDEFAULT,       // Pociatocna sirka
