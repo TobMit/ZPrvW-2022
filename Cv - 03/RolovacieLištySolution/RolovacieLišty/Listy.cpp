@@ -14,7 +14,7 @@ int APIENTRY WinMain(HINSTANCE hThisInst, HINSTANCE hPrevInst, PSTR lpszArgs, in
 	WNDCLASSEX    	wndclass;
 
 	wndclass.cbSize = sizeof(WNDCLASSEX);
-	wndclass.style = 0;          	// Implicitny styl
+	wndclass.style = CS_HREDRAW | CS_VREDRAW;          	// Implicitny styl
 	wndclass.lpfnWndProc = WndProc; 	// Oknova funkcia
 	wndclass.hInstance = hThisInst;  	// Popisovac tejto instancie
 	wndclass.lpszClassName = szWinName;  	// Nazov oknovej triedy
@@ -63,12 +63,21 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	HDC hdc;
 	PAINTSTRUCT ps;
 	RECT	  rect;
+	static int vyska = 0;
+	static int sirka = 0;
+	static int xPociatok = 0;
+	static int yPociatok = 0;
 
 	switch (message) {
+	case WM_SIZE:
+		vyska = HIWORD(lParam)/10;
+		sirka = LOWORD(lParam)/10;
+
+		break;
 	case WM_PAINT:
 		hdc = BeginPaint(hwnd, &ps);
-		GetClientRect(hwnd, &rect);
-		DrawText(hdc, "AHOJ WINDOWS !!! ", -1, &rect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+
+		Rectangle(hdc, xPociatok, yPociatok, sirka, vyska);
 		EndPaint(hwnd, &ps);
 		break;
 
