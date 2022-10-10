@@ -67,17 +67,102 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	static int sirka = 0;
 	static int xPociatok = 0;
 	static int yPociatok = 0;
+	static int sirkaKP = 0;
+	static int vyskaKP = 0;
 
 	switch (message) {
 	case WM_SIZE:
-		vyska = HIWORD(lParam)/10;
-		sirka = LOWORD(lParam)/10;
+	{
+		sirkaKP = LOWORD(lParam);
+		vyskaKP = HIWORD(lParam);
+		vyska = HIWORD(lParam) / 10;
+		sirka = LOWORD(lParam) / 10;
+		SetScrollRange(hwnd, SB_HORZ, 0, sirkaKP - sirka, true);
+		SetScrollRange(hwnd, SB_VERT, 0, vyskaKP - vyska, true);
+	}
+		break;
+
+	case WM_VSCROLL:
+		switch (LOWORD(wParam))
+		{
+		case SB_THUMBTRACK:
+			yPociatok = HIWORD(wParam);
+			SetScrollPos(hwnd, SB_VERT, HIWORD(wParam), true);
+			InvalidateRect(hwnd, NULL, true);
+			break;
+		case SB_LINEDOWN:
+			if (yPociatok + vyska < vyskaKP) {
+				yPociatok = yPociatok + 1;
+			}
+			SetScrollPos(hwnd, SB_VERT, yPociatok, true);
+			InvalidateRect(hwnd, NULL, true);
+			break;
+		case SB_LINEUP:
+			if (yPociatok > 0) {
+				yPociatok = yPociatok - 1;
+			}
+			
+			SetScrollPos(hwnd, SB_VERT, yPociatok, true);
+			InvalidateRect(hwnd, NULL, true);
+			break;
+		case SB_PAGEDOWN:
+			yPociatok = yPociatok + vyska;
+			SetScrollPos(hwnd, SB_VERT, yPociatok, true);
+			InvalidateRect(hwnd, NULL, true);
+			break;
+		case SB_PAGEUP:
+			yPociatok = yPociatok - vyska;
+			SetScrollPos(hwnd, SB_VERT, yPociatok, true);
+			InvalidateRect(hwnd, NULL, true);
+			break;
+		default:
+			break;
+		}
+		break;
+
+	case WM_HSCROLL:
+		switch (LOWORD(wParam))
+		{
+		case SB_THUMBTRACK:
+			xPociatok = HIWORD(wParam);
+			SetScrollPos(hwnd, SB_HORZ, HIWORD(wParam), true);
+			InvalidateRect(hwnd, NULL, true);
+			break;
+		case SB_LINEDOWN:
+			if (xPociatok + sirka < sirkaKP)
+			{
+				xPociatok = xPociatok + 1;
+			}
+			SetScrollPos(hwnd, SB_HORZ, xPociatok, true);
+			InvalidateRect(hwnd, NULL, true);
+			break;
+		case SB_LINEUP:
+			if (xPociatok > 0)
+			{
+				xPociatok = xPociatok - 1;
+			}
+			SetScrollPos(hwnd, SB_HORZ, xPociatok, true);
+			InvalidateRect(hwnd, NULL, true);
+			break;
+		case SB_PAGEDOWN:
+			xPociatok = xPociatok + sirka;
+			SetScrollPos(hwnd, SB_HORZ, xPociatok, true);
+			InvalidateRect(hwnd, NULL, true);
+			break;
+		case SB_PAGEUP:
+			xPociatok = xPociatok - sirka;
+			SetScrollPos(hwnd, SB_HORZ, xPociatok, true);
+			InvalidateRect(hwnd, NULL, true);
+			break;
+		default:
+			break;
+		}
 
 		break;
 	case WM_PAINT:
 		hdc = BeginPaint(hwnd, &ps);
 
-		Rectangle(hdc, xPociatok, yPociatok, sirka, vyska);
+		Rectangle(hdc, xPociatok, yPociatok, xPociatok + sirka, yPociatok + vyska);
 		EndPaint(hwnd, &ps);
 		break;
 
