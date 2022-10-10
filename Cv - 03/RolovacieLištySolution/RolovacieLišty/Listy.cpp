@@ -1,4 +1,4 @@
-// Zakladna aplikacia
+﻿// Zakladna aplikacia
 
 #include <windows.h>
 #include <windowsx.h>
@@ -69,6 +69,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	static int yPociatok = 0;
 	static int sirkaKP = 0;
 	static int vyskaKP = 0;
+	static bool klik;
 
 	switch (message) {
 	case WM_SIZE:
@@ -80,89 +81,113 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		SetScrollRange(hwnd, SB_HORZ, 0, sirkaKP - sirka, true);
 		SetScrollRange(hwnd, SB_VERT, 0, vyskaKP - vyska, true);
 	}
-		break;
+	break;
 
 	case WM_VSCROLL:
-		switch (LOWORD(wParam))
-		{
-		case SB_THUMBTRACK:
-			yPociatok = HIWORD(wParam);
-			SetScrollPos(hwnd, SB_VERT, HIWORD(wParam), true);
-			InvalidateRect(hwnd, NULL, true);
-			break;
-		case SB_LINEDOWN:
-			if (yPociatok + vyska < vyskaKP) {
-				yPociatok = yPociatok + 1;
+		if (!klik) {
+			switch (LOWORD(wParam))
+			{
+			case SB_THUMBTRACK:
+				yPociatok = HIWORD(wParam);
+				SetScrollPos(hwnd, SB_VERT, HIWORD(wParam), true);
+				InvalidateRect(hwnd, NULL, true);
+				break;
+			case SB_LINEDOWN:
+				if (yPociatok + vyska < vyskaKP) {
+					yPociatok = yPociatok + 1;
+				}
+				SetScrollPos(hwnd, SB_VERT, yPociatok, true);
+				InvalidateRect(hwnd, NULL, true);
+				break;
+			case SB_LINEUP:
+				if (yPociatok > 0) {
+					yPociatok = yPociatok - 1;
+				}
+
+				SetScrollPos(hwnd, SB_VERT, yPociatok, true);
+				InvalidateRect(hwnd, NULL, true);
+				break;
+			case SB_PAGEDOWN:
+				yPociatok = yPociatok + vyska;
+				SetScrollPos(hwnd, SB_VERT, yPociatok, true);
+				InvalidateRect(hwnd, NULL, true);
+				break;
+			case SB_PAGEUP:
+				yPociatok = yPociatok - vyska;
+				SetScrollPos(hwnd, SB_VERT, yPociatok, true);
+				InvalidateRect(hwnd, NULL, true);
+				break;
+			default:
+				break;
 			}
-			SetScrollPos(hwnd, SB_VERT, yPociatok, true);
-			InvalidateRect(hwnd, NULL, true);
-			break;
-		case SB_LINEUP:
-			if (yPociatok > 0) {
-				yPociatok = yPociatok - 1;
-			}
-			
-			SetScrollPos(hwnd, SB_VERT, yPociatok, true);
-			InvalidateRect(hwnd, NULL, true);
-			break;
-		case SB_PAGEDOWN:
-			yPociatok = yPociatok + vyska;
-			SetScrollPos(hwnd, SB_VERT, yPociatok, true);
-			InvalidateRect(hwnd, NULL, true);
-			break;
-		case SB_PAGEUP:
-			yPociatok = yPociatok - vyska;
-			SetScrollPos(hwnd, SB_VERT, yPociatok, true);
-			InvalidateRect(hwnd, NULL, true);
-			break;
-		default:
-			break;
 		}
 		break;
 
 	case WM_HSCROLL:
-		switch (LOWORD(wParam))
-		{
-		case SB_THUMBTRACK:
-			xPociatok = HIWORD(wParam);
-			SetScrollPos(hwnd, SB_HORZ, HIWORD(wParam), true);
-			InvalidateRect(hwnd, NULL, true);
-			break;
-		case SB_LINEDOWN:
-			if (xPociatok + sirka < sirkaKP)
+		if (!klik) {
+			switch (LOWORD(wParam))
 			{
-				xPociatok = xPociatok + 1;
+			case SB_THUMBTRACK:
+				xPociatok = HIWORD(wParam);
+				SetScrollPos(hwnd, SB_HORZ, HIWORD(wParam), true);
+				InvalidateRect(hwnd, NULL, true);
+				break;
+			case SB_LINEDOWN:
+				if (xPociatok + sirka < sirkaKP)
+				{
+					xPociatok = xPociatok + 1;
+				}
+				SetScrollPos(hwnd, SB_HORZ, xPociatok, true);
+				InvalidateRect(hwnd, NULL, true);
+				break;
+			case SB_LINEUP:
+				if (xPociatok > 0)
+				{
+					xPociatok = xPociatok - 1;
+				}
+				SetScrollPos(hwnd, SB_HORZ, xPociatok, true);
+				InvalidateRect(hwnd, NULL, true);
+				break;
+			case SB_PAGEDOWN:
+				xPociatok = xPociatok + sirka;
+				SetScrollPos(hwnd, SB_HORZ, xPociatok, true);
+				InvalidateRect(hwnd, NULL, true);
+				break;
+			case SB_PAGEUP:
+				xPociatok = xPociatok - sirka;
+				SetScrollPos(hwnd, SB_HORZ, xPociatok, true);
+				InvalidateRect(hwnd, NULL, true);
+				break;
+			default:
+				break;
 			}
-			SetScrollPos(hwnd, SB_HORZ, xPociatok, true);
-			InvalidateRect(hwnd, NULL, true);
-			break;
-		case SB_LINEUP:
-			if (xPociatok > 0)
-			{
-				xPociatok = xPociatok - 1;
-			}
-			SetScrollPos(hwnd, SB_HORZ, xPociatok, true);
-			InvalidateRect(hwnd, NULL, true);
-			break;
-		case SB_PAGEDOWN:
-			xPociatok = xPociatok + sirka;
-			SetScrollPos(hwnd, SB_HORZ, xPociatok, true);
-			InvalidateRect(hwnd, NULL, true);
-			break;
-		case SB_PAGEUP:
-			xPociatok = xPociatok - sirka;
-			SetScrollPos(hwnd, SB_HORZ, xPociatok, true);
-			InvalidateRect(hwnd, NULL, true);
-			break;
-		default:
-			break;
 		}
-
+		break;
+	case WM_LBUTTONDOWN:
+	{	// keď je v case {} tak sa z toho stávaju glob premenné I gess
+		POINT p;
+		p.x = GET_X_LPARAM(wParam);
+		p.y = GET_Y_LPARAM(wParam);
+		
+		SetRect(&rect, xPociatok, xPociatok + sirka, yPociatok, yPociatok + vyska);
+		klik = PtInRect(&rect, p);
+		InvalidateRect(hwnd, nullptr, true);
+	}
 		break;
 	case WM_PAINT:
 		hdc = BeginPaint(hwnd, &ps);
 
 		Rectangle(hdc, xPociatok, yPociatok, xPociatok + sirka, yPociatok + vyska);
+		if (klik)
+		{
+			HBRUSH  sivy = GetStockBrush(GRAY_BRUSH);
+			HBRUSH oldstetc = (HBRUSH)SelectObject(hdc, sivy);
+			SetRect(&rect, xPociatok, xPociatok + sirka, yPociatok, yPociatok + sirka);
+			FillRect(hdc, &rect, sivy);
+			SelectObject(hdc,oldstetc);
+			// stetc nemusim mazať pretože ziskavame systémovi štetec
+
+		}
 		EndPaint(hwnd, &ps);
 		break;
 
