@@ -161,10 +161,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			SendMessage(hwnd, WM_VSCROLL, SB_LINEDOWN, 0);
 			break;
 		case VK_LEFT:
-			SendMessage(hwnd, WM_HSCROLL, SB_LINELEFT, 0);
+			SendMessage(hwnd, WM_HSCROLL, GetKeyState(VK_CONTROL) < 0 ? SB_PAGELEFT : SB_LINELEFT, 0);
 			break;
 		case VK_RIGHT:
-			SendMessage(hwnd, WM_HSCROLL, SB_LINERIGHT, 0);
+			SendMessage(hwnd, WM_HSCROLL, GetKeyState(VK_CONTROL) < 0 ? SB_PAGERIGHT : SB_LINERIGHT, 0);
 			break;
 		case VK_NEXT: // page down a page up
 			SendMessage(hwnd, WM_VSCROLL, SB_PAGEDOWN, 0);
