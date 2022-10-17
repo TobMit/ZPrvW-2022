@@ -1,4 +1,4 @@
-// Zakladna aplikacia
+﻿// Zakladna aplikacia
 
 #include <windows.h>
 #include <windowsx.h>
@@ -7,7 +7,7 @@ LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
 TCHAR szWinName[] = L"MojeOkno"; 		// Nazov oknovej triedy
 
-int x, y, sirka, vyska, sirkaKP, vyskaKP; // m�m ich ako glob�lne premmen�
+int x, y, sirka, vyska, sirkaKP, vyskaKP; // mám ich ako globálne premmené
 void spracujKlavesu(HWND hwnd, int wParam);
 const int WM_MOJASPRAVA = WM_USER;
 
@@ -70,10 +70,18 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	RECT	  rect;
 	static bool klik;
 	static HRGN region;
+	TEXTMETRIC tm;
+	static TCHAR keyBuf[5];
+
 	switch (message) {
 	case WM_CREATE:
 		x = y = 0;
 		klik = true;
+		hdc = GetDC(hwnd);
+		GetTextMetrics(hdc, &tm);
+		ReleaseDC(hwnd, hdc);
+		sirka = tm.tmMaxCharWidth;
+		vyska = tm.tmHeight;
 		break;
 	case WM_SIZE:
 		sirkaKP = LOWORD(lParam);
@@ -163,17 +171,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		SendMessage(hwnd, WM_MOJASPRAVA, wParam, 0);
 		break;
 
+	case WM_CHAR:
+		*keyBuf = wParam;
+		InvalidateRect(hwnd, nullptr, true);
+
 	case WM_PAINT:
 		hdc = BeginPaint(hwnd, &ps);
-		Ellipse(hdc, x, y, x + sirka, y + vyska);
-		if (klik)
-		{
-			HBRUSH sivy = GetStockBrush(LTGRAY_BRUSH);
-			HBRUSH oldStetec = (HBRUSH)SelectObject(hdc, sivy);
-			region = CreateEllipticRgn(x + 1, y + 1, x + sirka, y + vyska);
-			FillRgn(hdc, region, sivy);
-			SelectObject(hdc, oldStetec);
-		}
+		TextOut(hdc, x, y, keyBuf,1); // posledný parameter je koľko chcem znakov vytlačiť
 		EndPaint(hwnd, &ps);
 		break;
 
