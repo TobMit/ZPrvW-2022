@@ -9,6 +9,8 @@ TCHAR szWinName[] = L"MojeOkno"; 		// Nazov oknovej triedy
 
 int x, y, sirka, vyska, sirkaKP, vyskaKP; // mám ich ako globálne premmené
 void spracujKlavesu(HWND hwnd, int wParam);
+const int WM_MOJASPRAVA = WM_USER;
+
 
 int APIENTRY WinMain(HINSTANCE hThisInst, HINSTANCE hPrevInst, PSTR lpszArgs, int nWinMode)
 {
@@ -153,8 +155,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	break;
 
-	case WM_KEYDOWN:
+	case WM_MOJASPRAVA:
 		spracujKlavesu(hwnd, wParam);
+		break;
+
+	case WM_KEYDOWN:
+		SendMessage(hwnd, WM_MOJASPRAVA, wParam, 0);
 		break;
 
 	case WM_PAINT:
