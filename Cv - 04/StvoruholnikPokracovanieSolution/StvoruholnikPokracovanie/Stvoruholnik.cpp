@@ -7,6 +7,9 @@ LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
 TCHAR szWinName[] = L"MojeOkno"; 		// Nazov oknovej triedy
 
+int x, y, sirka, vyska, sirkaKP, vyskaKP; // mám ich ako globálne premmené
+void spracujKlavesu(HWND hwnd, int wParam);
+
 int APIENTRY WinMain(HINSTANCE hThisInst, HINSTANCE hPrevInst, PSTR lpszArgs, int nWinMode)
 {
 	HWND        	hwnd;
@@ -63,7 +66,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	HDC hdc;
 	PAINTSTRUCT ps;
 	RECT	  rect;
-	static int x, y, sirka, vyska, sirkaKP, vyskaKP;
 	static bool klik;
 	static HRGN region;
 	switch (message) {
@@ -152,39 +154,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	break;
 
 	case WM_KEYDOWN:
-		switch (wParam)
-		{
-		case VK_UP:
-			SendMessage(hwnd, WM_VSCROLL, SB_LINEUP, 0);
-			break;
-		case VK_DOWN:
-			SendMessage(hwnd, WM_VSCROLL, SB_LINEDOWN, 0);
-			break;
-		case VK_LEFT:
-			SendMessage(hwnd, WM_HSCROLL, GetKeyState(VK_CONTROL) < 0 ? SB_PAGELEFT : SB_LINELEFT, 0);
-			break;
-		case VK_RIGHT:
-			SendMessage(hwnd, WM_HSCROLL, GetKeyState(VK_CONTROL) < 0 ? SB_PAGERIGHT : SB_LINERIGHT, 0);
-			break;
-		case VK_NEXT: // page down a page up
-			SendMessage(hwnd, WM_VSCROLL, SB_PAGEDOWN, 0);
-			break;
-		case VK_PRIOR: // page down a page up
-			SendMessage(hwnd, WM_VSCROLL, SB_PAGEUP, 0);
-			break;
-		case VK_HOME:
-			x = 1;
-			y = 0;
-			SendMessage(hwnd, WM_HSCROLL , SB_LINELEFT, 0);
-			SendMessage(hwnd, WM_VSCROLL , SB_LINEUP, 0);
-			break;
-		case VK_END:
-			x = sirkaKP - sirka - 1;
-			y = vyskaKP - vyska;
-			SendMessage(hwnd, WM_HSCROLL, SB_LINERIGHT, 0);
-			SendMessage(hwnd, WM_VSCROLL, SB_LINEDOWN, 0);
-			break;
-		}
+		spracujKlavesu(hwnd, wParam);
 		break;
 
 	case WM_PAINT:
@@ -208,4 +178,40 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		return DefWindowProc(hwnd, message, wParam, lParam);
 	}
 	return 0;
+}
+
+void spracujKlavesu(HWND hwnd, int wParam) {
+	switch (wParam)
+	{
+	case VK_UP:
+		SendMessage(hwnd, WM_VSCROLL, SB_LINEUP, 0);
+		break;
+	case VK_DOWN:
+		SendMessage(hwnd, WM_VSCROLL, SB_LINEDOWN, 0);
+		break;
+	case VK_LEFT:
+		SendMessage(hwnd, WM_HSCROLL, GetKeyState(VK_CONTROL) < 0 ? SB_PAGELEFT : SB_LINELEFT, 0);
+		break;
+	case VK_RIGHT:
+		SendMessage(hwnd, WM_HSCROLL, GetKeyState(VK_CONTROL) < 0 ? SB_PAGERIGHT : SB_LINERIGHT, 0);
+		break;
+	case VK_NEXT: // page down a page up
+		SendMessage(hwnd, WM_VSCROLL, SB_PAGEDOWN, 0);
+		break;
+	case VK_PRIOR: // page down a page up
+		SendMessage(hwnd, WM_VSCROLL, SB_PAGEUP, 0);
+		break;
+	case VK_HOME:
+		x = 1;
+		y = 0;
+		SendMessage(hwnd, WM_HSCROLL, SB_LINELEFT, 0);
+		SendMessage(hwnd, WM_VSCROLL, SB_LINEUP, 0);
+		break;
+	case VK_END:
+		x = sirkaKP - sirka - 1;
+		y = vyskaKP - vyska;
+		SendMessage(hwnd, WM_HSCROLL, SB_LINERIGHT, 0);
+		SendMessage(hwnd, WM_VSCROLL, SB_LINEDOWN, 0);
+		break;
+	}
 }
