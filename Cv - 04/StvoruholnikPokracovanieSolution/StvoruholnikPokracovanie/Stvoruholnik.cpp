@@ -150,6 +150,31 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		InvalidateRect(hwnd, nullptr, true);
 	}
 	break;
+
+	case WM_KEYDOWN:
+		switch (wParam)
+		{
+		case VK_UP:
+			SendMessage(hwnd, WM_VSCROLL, SB_LINEUP, 0);
+			break;
+		case VK_DOWN:
+			SendMessage(hwnd, WM_VSCROLL, SB_LINEDOWN, 0);
+			break;
+		case VK_LEFT:
+			SendMessage(hwnd, WM_HSCROLL, SB_LINELEFT, 0);
+			break;
+		case VK_RIGHT:
+			SendMessage(hwnd, WM_HSCROLL, SB_LINERIGHT, 0);
+			break;
+		case VK_NEXT: // page down a page up
+			SendMessage(hwnd, WM_VSCROLL, SB_PAGEDOWN, 0);
+			break;
+		case VK_PRIOR: // page down a page up
+			SendMessage(hwnd, WM_VSCROLL, SB_PAGEUP, 0);
+			break;
+		}
+		break;
+
 	case WM_PAINT:
 		hdc = BeginPaint(hwnd, &ps);
 		Ellipse(hdc, x, y, x + sirka, y + vyska);
