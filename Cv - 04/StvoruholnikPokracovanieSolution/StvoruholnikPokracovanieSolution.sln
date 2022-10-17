@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.32126.315
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StvoruholnikPokracovanie", "StvoruholnikPokracovanie\StvoruholnikPokracovanie.vcxproj", "{9C244E49-2E26-4736-9C4E-4096B36F7567}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Text", "Text\Text.vcxproj", "{C5E85D1D-3D06-4E99-BBD7-236F7784F571}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,14 @@ Global
 		{9C244E49-2E26-4736-9C4E-4096B36F7567}.Release|x64.Build.0 = Release|x64
 		{9C244E49-2E26-4736-9C4E-4096B36F7567}.Release|x86.ActiveCfg = Release|Win32
 		{9C244E49-2E26-4736-9C4E-4096B36F7567}.Release|x86.Build.0 = Release|Win32
+		{C5E85D1D-3D06-4E99-BBD7-236F7784F571}.Debug|x64.ActiveCfg = Debug|x64
+		{C5E85D1D-3D06-4E99-BBD7-236F7784F571}.Debug|x64.Build.0 = Debug|x64
+		{C5E85D1D-3D06-4E99-BBD7-236F7784F571}.Debug|x86.ActiveCfg = Debug|Win32
+		{C5E85D1D-3D06-4E99-BBD7-236F7784F571}.Debug|x86.Build.0 = Debug|Win32
+		{C5E85D1D-3D06-4E99-BBD7-236F7784F571}.Release|x64.ActiveCfg = Release|x64
+		{C5E85D1D-3D06-4E99-BBD7-236F7784F571}.Release|x64.Build.0 = Release|x64
+		{C5E85D1D-3D06-4E99-BBD7-236F7784F571}.Release|x86.ActiveCfg = Release|Win32
+		{C5E85D1D-3D06-4E99-BBD7-236F7784F571}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
