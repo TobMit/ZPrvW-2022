@@ -88,8 +88,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		vyskaKP = HIWORD(lParam);
 		sirka = sirkaKP / 10;
 		vyska = vyskaKP / 10;
-		SetScrollRange(hwnd, SB_HORZ, 0, sirkaKP - sirka, true);
-		SetScrollRange(hwnd, SB_VERT, 0, vyskaKP - vyska, true);
+		SetScrollRange(hwnd, SB_HORZ, 0, sirkaKP / sirka, true);
+		SetScrollRange(hwnd, SB_VERT, 0, vyskaKP / vyska, true);
 		x = x < 0 ? 0 : x;
 		x = x > sirkaKP - sirka ? sirkaKP - sirka : x;
 		y = y < 0 ? 0 : y;
@@ -101,15 +101,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			switch (LOWORD(wParam))
 			{
 			case SB_LINEDOWN:
-				y++;
-				break;
-			case SB_PAGEDOWN:
 				y += vyska;
 				break;
 			case SB_LINEUP:
-				y--;
-				break;
-			case SB_PAGEUP:
 				y -= vyska;
 				break;
 			case SB_THUMBPOSITION:
@@ -119,8 +113,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 			y = y < 0 ? 0 : y;
 			y = y > vyskaKP - vyska ? vyskaKP - vyska : y;
-			SetScrollPos(hwnd, SB_VERT, y, true);
-			InvalidateRect(hwnd, nullptr, true);
+			SetScrollPos(hwnd, SB_VERT, y / vyska, true);
+			SetCaretPos(x, y);
+			InvalidateRect(hwnd, nullptr, false);
 		}
 		break;
 	case WM_HSCROLL:
@@ -129,15 +124,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			switch (LOWORD(wParam))
 			{
 			case SB_LINERIGHT:
-				x++;
-				break;
-			case SB_PAGERIGHT:
 				x += sirka;
 				break;
 			case SB_LINELEFT:
-				x--;
-				break;
-			case SB_PAGELEFT:
 				x -= sirka;
 				break;
 			case SB_THUMBPOSITION:
@@ -147,20 +136,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 			x = x < 0 ? 0 : x;
 			x = x > sirkaKP - sirka ? sirkaKP - sirka : x;
-			SetScrollPos(hwnd, SB_HORZ, x, true);
-			InvalidateRect(hwnd, nullptr, true);
+			SetScrollPos(hwnd, SB_HORZ, x / sirka, true);
+			SetCaretPos(x, y);
+			InvalidateRect(hwnd, nullptr, false);
 		}
 		break;
-	case WM_LBUTTONDOWN:
-	{
-		POINT p;
-		p.x = GET_X_LPARAM(lParam);
-		p.y = GET_Y_LPARAM(lParam);
-		SetRect(&rect, x, y, x + sirka, y + vyska);
-		region = CreateEllipticRgn(x, y, x + sirka, y + vyska);
-		klik = PtInRegion(region, p.x, p.y);
-		InvalidateRect(hwnd, nullptr, true);
-	}
 	break;
 
 	case WM_MOJASPRAVA:
@@ -173,11 +153,24 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	case WM_CHAR:
 		*keyBuf = wParam;
-		InvalidateRect(hwnd, nullptr, true);
+		HideCaret(hwnd);
+		hdc = GetDC(hwnd);
+		TextOut(hdc, x, y, keyBuf, 1); // posledný parameter je koľko chcem znakov vytlačiť
+		SendMessage(hwnd, WM_MOJASPRAVA, VK_RIGHT, 0);
+		ReleaseDC(hwnd, hdc);
+		ShowCaret(hwnd);
 
+	case WM_SETFOCUS:
+		CreateCaret(hwnd, nullptr,1, vyska);
+		SetCaretPos(x, y);
+		ShowCaret(hwnd);
+		break;
+	case WM_KILLFOCUS:
+		HideCaret(hwnd);
+		DestroyCaret();
+		break;
 	case WM_PAINT:
 		hdc = BeginPaint(hwnd, &ps);
-		TextOut(hdc, x, y, keyBuf,1); // posledný parameter je koľko chcem znakov vytlačiť
 		EndPaint(hwnd, &ps);
 		break;
 
@@ -190,7 +183,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
+static bool kurzor = false;
 void spracujKlavesu(HWND hwnd, int wParam) {
+	
 	switch (wParam)
 	{
 	case VK_UP:
@@ -223,5 +218,14 @@ void spracujKlavesu(HWND hwnd, int wParam) {
 		SendMessage(hwnd, WM_HSCROLL, SB_LINERIGHT, 0);
 		SendMessage(hwnd, WM_VSCROLL, SB_LINEDOWN, 0);
 		break;
+	case VK_INSERT:
+		HideCaret(hwnd);
+		DestroyCaret();
+		CreateCaret(hwnd, 0, kurzor ? 1 : sirka , vyska);
+		kurzor != kurzor;
+		ShowCaret(hwnd);
+
+		break;
+
 	}
 }
