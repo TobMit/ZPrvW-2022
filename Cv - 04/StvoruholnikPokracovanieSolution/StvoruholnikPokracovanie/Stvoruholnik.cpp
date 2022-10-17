@@ -107,7 +107,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 			y = y < 0 ? 0 : y;
 			y = y > vyskaKP - vyska ? vyskaKP - vyska : y;
-			SetScrollPos(hwnd, SB_VERT, y, false);
+			SetScrollPos(hwnd, SB_VERT, y, true);
 			InvalidateRect(hwnd, nullptr, true);
 		}
 		break;
@@ -135,7 +135,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 			x = x < 0 ? 0 : x;
 			x = x > sirkaKP - sirka ? sirkaKP - sirka : x;
-			SetScrollPos(hwnd, SB_HORZ, x, false);
+			SetScrollPos(hwnd, SB_HORZ, x, true);
 			InvalidateRect(hwnd, nullptr, true);
 		}
 		break;
@@ -171,6 +171,18 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 		case VK_PRIOR: // page down a page up
 			SendMessage(hwnd, WM_VSCROLL, SB_PAGEUP, 0);
+			break;
+		case VK_HOME:
+			x = 1;
+			y = 0;
+			SendMessage(hwnd, WM_HSCROLL , SB_LINELEFT, 0);
+			SendMessage(hwnd, WM_VSCROLL , SB_LINEUP, 0);
+			break;
+		case VK_END:
+			x = sirkaKP - sirka - 1;
+			y = vyskaKP - vyska;
+			SendMessage(hwnd, WM_HSCROLL, SB_LINERIGHT, 0);
+			SendMessage(hwnd, WM_VSCROLL, SB_LINEDOWN, 0);
 			break;
 		}
 		break;
