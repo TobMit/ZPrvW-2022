@@ -63,6 +63,18 @@ BEGIN
     END
 END
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_ACCELERATOR1 ACCELERATORS
+BEGIN
+    "^R",           ID_PROGRAM_40005,       ASCII,  NOINVERT
+    "^T",           ID_PROGRAM_STOP,        ASCII,  NOINVERT
+END
+
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 
