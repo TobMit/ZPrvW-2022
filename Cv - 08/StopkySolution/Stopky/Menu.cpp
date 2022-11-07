@@ -50,11 +50,15 @@ int APIENTRY WinMain(HINSTANCE hThisInst, HINSTANCE hPrevInst, PSTR lpszArgs, in
 
 	ShowWindow(hwnd, nWinMode);        // Zobrazenie okna
 	UpdateWindow(hwnd);
+	HACCEL hakceleratory = LoadAccelerators(hThisInst, MAKEINTRESOURCE(IDR_ACCELERATOR1));
 
 	// Slucka sprav
 	while (GetMessage(&msg, NULL, 0, 0)) {
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
+		// keby mám viac tabuliek tak by som ich tam musel uviesť všetky
+		if (hakceleratory && !TranslateAcceleratorA(hwnd, hakceleratory, &msg)) {
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
 	}
 	return msg.wParam;
 }
@@ -117,6 +121,38 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		InvalidateRect(hwnd, nullptr, true);
 		break;
 
+	case WM_MENUSELECT:
+		char infoBuf[100];
+		switch (LOWORD(wParam))
+		{
+		case ID_PROGRAM_KONIEC:
+			lstrcpy(infoBuf, "Ukončenie programu");
+			break;
+		case ID_PROGRAM_40005: //toto by malo byť štart
+			lstrcpy(infoBuf, "Štart Stopiek");
+			break;
+		case ID_PROGRAM_STOP:
+			lstrcpy(infoBuf, "Zastavenie stopiek");
+			break;
+		case ID_PROGRAM_OAPLIK40003:
+			lstrcpy(infoBuf, "Informácie o programe");
+			break;
+
+
+		default:
+			lstrcpy(infoBuf, "");
+			break;
+		}
+
+		hdc = GetDC(hwnd);
+		GetClientRect(hwnd, &rect);
+		MoveToEx(hdc, 0, rect.bottom - 27, nullptr);
+		LineTo(hdc, rect.right, rect.bottom - 27);
+		TextOut(hdc, 10, rect.bottom - 25, "                                                  ",50);
+		TextOut(hdc, 10, rect.bottom - 25, infoBuf,lstrlen(infoBuf));
+		ReleaseDC(hwnd, hdc);
+
+		break;
 	case WM_DESTROY:
 		if (casovacAktivny)
 		{
