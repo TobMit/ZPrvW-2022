@@ -16,7 +16,8 @@
 // English (United States) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-LANGUAGE 9, 1
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -24,24 +25,43 @@ LANGUAGE 9, 1
 // TEXTINCLUDE
 //
 
-1 TEXTINCLUDE  
+1 TEXTINCLUDE 
 BEGIN
     "resource.h\0"
 END
 
-2 TEXTINCLUDE  
+2 TEXTINCLUDE 
 BEGIN
     "#include ""winres.h""\r\n"
     "\0"
 END
 
-3 TEXTINCLUDE  
+3 TEXTINCLUDE 
 BEGIN
     "\r\n"
     "\0"
 END
 
 #endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MENU1 MENU
+BEGIN
+    POPUP "Program"
+    BEGIN
+        MENUITEM "&Štart",                      ID_PROGRAM_40005
+        MENUITEM "&Stop",                       ID_PROGRAM_STOP, INACTIVE
+        MENUITEM SEPARATOR
+        MENUITEM "O aplikácií",                 ID_PROGRAM_OAPLIK40003
+        MENUITEM SEPARATOR
+        MENUITEM "Koniec",                      ID_PROGRAM_KONIEC
+    END
+END
 
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
@@ -57,3 +77,4 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
+
