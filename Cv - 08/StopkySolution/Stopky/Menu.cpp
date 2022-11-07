@@ -105,6 +105,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			EnableMenuItem(hmenu, ID_PROGRAM_40005, MF_ENABLED);
 			EnableMenuItem(hmenu, ID_PROGRAM_STOP, MF_DISABLED);
 			break;
+
+		case ID_PROGRAM_OAPLIK40003:
+			MessageBox(hwnd, "Verzia 1.0.0\nAutor: TM\nDátum: 7.nov.2022", "O aplikácii", MB_OK | MB_ICONEXCLAMATION);
+			break;
 		}
 		break;
 
