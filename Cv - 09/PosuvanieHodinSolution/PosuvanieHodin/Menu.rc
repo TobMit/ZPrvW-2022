@@ -54,10 +54,10 @@ IDR_MENU1 MENU
 BEGIN
     POPUP "Menu"
     BEGIN
-        MENUITEM "Vlavo do&lu",                 ID_VPRAVODOLU_V40005
-        MENUITEM "Vlavo &hore",                 ID_VPRAVODOLU_V40006
-        MENUITEM "Vpr&avo hore",                ID_VPRAVODOLU_VPRAVOHORE
-        MENUITEM "Vp&ravo dole",                ID_MENU_VPRAVODOLE, INACTIVE
+        MENUITEM "Vlavo do&lu",                 ID_VLAVODOLU
+        MENUITEM "Vlavo &hore",                 ID_VLAVOHORE
+        MENUITEM "Vpr&avo hore",                ID_VPRAVOHORE
+        MENUITEM "Vp&ravo dole",                ID_VPRAVODOLE, INACTIVE
     END
 END
 

@@ -1,4 +1,4 @@
-// Zakladna aplikacia
+Ôªø// Zakladna aplikacia
 
 #include <windows.h>
 #include <windowsx.h>
@@ -73,19 +73,51 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_CREATE:
 		hmenu = GetMenu(hwnd);
 		startCas = aktualnyCas = time(nullptr);
-		SetTimer(hwnd, 1, 1000, nullptr);
+		SetTimer(hwnd, 1, 1000, nullptr); // nastavenie ƒçasovaƒça
 		InvalidateRect(hwnd, nullptr, true);
 		break;
 	case WM_PAINT:
 		hdc = BeginPaint(hwnd, &ps);
-		{ // zavol· sa alok·cia / inicializ·cia objekut
+		{ // zavol√° sa alok√°cia / inicializ√°cia objekut
 			GetClientRect(hwnd, &rect);
 			int difCas = aktualnyCas - startCas;
 			char casBuf[20];
-			wsprintf(casBuf, "%02d:%02d:%02d", difCas / 3600, (difCas % 3600) / 60, (difCas % 3600 % 60)); // funkcia windowsu m· v˝hodu oproti sprintf, je uloûen· v dll
-			DrawText(hdc, casBuf, -1, &rect, DT_SINGLELINE | DT_VCENTER | DT_CENTER);
-		} // vol· sa deötruktor objektu
+			wsprintf(casBuf, "%02d:%02d:%02d", difCas / 3600, (difCas % 3600) / 60, (difCas % 3600 % 60)); // funkcia windowsu m√° v√Ωhodu oproti sprintf, je ulo≈æen√° v dll
+			DrawText(hdc, casBuf, -1, &rect, DT_SINGLELINE | DT_BOTTOM | DT_RIGHT);
+		} // vol√° sa de≈°truktor objektu
 		EndPaint(hwnd, &ps);
+		break;
+
+	case WM_COMMAND:
+		switch (LOWORD(wParam))
+		{
+		case ID_VLAVODOLU:
+			EnableMenuItem(hmenu, ID_VLAVODOLU, MF_DISABLED);
+			EnableMenuItem(hmenu, ID_VLAVOHORE, MF_ENABLED);
+			EnableMenuItem(hmenu, ID_VPRAVOHORE, MF_ENABLED);
+			EnableMenuItem(hmenu, ID_VPRAVODOLE, MF_ENABLED);
+			break;
+		case ID_VLAVOHORE:
+			EnableMenuItem(hmenu, ID_VLAVODOLU, MF_ENABLED);
+			EnableMenuItem(hmenu, ID_VLAVOHORE, MF_DISABLED);
+			EnableMenuItem(hmenu, ID_VPRAVOHORE, MF_ENABLED);
+			EnableMenuItem(hmenu, ID_VPRAVODOLE, MF_ENABLED);
+			break;
+
+		case ID_VPRAVOHORE:
+			EnableMenuItem(hmenu, ID_VLAVODOLU, MF_ENABLED);
+			EnableMenuItem(hmenu, ID_VLAVOHORE, MF_ENABLED);
+			EnableMenuItem(hmenu, ID_VPRAVOHORE, MF_DISABLED);
+			EnableMenuItem(hmenu, ID_VPRAVODOLE, MF_ENABLED);
+			break;
+
+		case ID_VPRAVODOLE:
+			EnableMenuItem(hmenu, ID_VLAVODOLU, MF_ENABLED);
+			EnableMenuItem(hmenu, ID_VLAVOHORE, MF_ENABLED);
+			EnableMenuItem(hmenu, ID_VPRAVOHORE, MF_ENABLED);
+			EnableMenuItem(hmenu, ID_VPRAVODOLE, MF_DISABLED);
+			break;
+		}
 		break;
 
 	case WM_TIMER:
