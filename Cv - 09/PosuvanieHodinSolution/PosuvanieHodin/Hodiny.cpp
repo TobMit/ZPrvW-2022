@@ -68,6 +68,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	RECT	  rect;
 	static time_t startCas, aktualnyCas;
 	static HMENU hmenu;
+	static int pozicia = DT_BOTTOM | DT_RIGHT;
 
 	switch (message) {
 	case WM_CREATE:
@@ -83,7 +84,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			int difCas = aktualnyCas - startCas;
 			char casBuf[20];
 			wsprintf(casBuf, "%02d:%02d:%02d", difCas / 3600, (difCas % 3600) / 60, (difCas % 3600 % 60)); // funkcia windowsu má výhodu oproti sprintf, je uložená v dll
-			DrawText(hdc, casBuf, -1, &rect, DT_SINGLELINE | DT_BOTTOM | DT_RIGHT);
+			DrawText(hdc, casBuf, -1, &rect, DT_SINGLELINE | pozicia);
 		} // volá sa deštruktor objektu
 		EndPaint(hwnd, &ps);
 		break;
@@ -96,12 +97,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			EnableMenuItem(hmenu, ID_VLAVOHORE, MF_ENABLED);
 			EnableMenuItem(hmenu, ID_VPRAVOHORE, MF_ENABLED);
 			EnableMenuItem(hmenu, ID_VPRAVODOLE, MF_ENABLED);
+			pozicia = DT_BOTTOM | DT_LEFT;
 			break;
 		case ID_VLAVOHORE:
 			EnableMenuItem(hmenu, ID_VLAVODOLU, MF_ENABLED);
 			EnableMenuItem(hmenu, ID_VLAVOHORE, MF_DISABLED);
 			EnableMenuItem(hmenu, ID_VPRAVOHORE, MF_ENABLED);
 			EnableMenuItem(hmenu, ID_VPRAVODOLE, MF_ENABLED);
+			pozicia = DT_TOP | DT_LEFT;
 			break;
 
 		case ID_VPRAVOHORE:
@@ -109,6 +112,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			EnableMenuItem(hmenu, ID_VLAVOHORE, MF_ENABLED);
 			EnableMenuItem(hmenu, ID_VPRAVOHORE, MF_DISABLED);
 			EnableMenuItem(hmenu, ID_VPRAVODOLE, MF_ENABLED);
+			pozicia = DT_TOP | DT_RIGHT;
 			break;
 
 		case ID_VPRAVODOLE:
@@ -116,6 +120,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			EnableMenuItem(hmenu, ID_VLAVOHORE, MF_ENABLED);
 			EnableMenuItem(hmenu, ID_VPRAVOHORE, MF_ENABLED);
 			EnableMenuItem(hmenu, ID_VPRAVODOLE, MF_DISABLED);
+			pozicia = DT_BOTTOM | DT_RIGHT;
 			break;
 		}
 		break;
