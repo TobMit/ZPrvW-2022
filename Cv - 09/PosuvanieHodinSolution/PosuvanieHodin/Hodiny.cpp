@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <windowsx.h>
 #include "resource.h"
+#include <ctime>
 
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -65,16 +66,34 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	HDC hdc;
 	PAINTSTRUCT ps;
 	RECT	  rect;
+	static time_t startCas, aktualnyCas;
+	static HMENU hmenu;
 
 	switch (message) {
+	case WM_CREATE:
+		hmenu = GetMenu(hwnd);
+		startCas = aktualnyCas = time(nullptr);
+		SetTimer(hwnd, 1, 1000, nullptr);
+		InvalidateRect(hwnd, nullptr, true);
+		break;
 	case WM_PAINT:
 		hdc = BeginPaint(hwnd, &ps);
-		GetClientRect(hwnd, &rect);
-		DrawText(hdc, "AHOJ WINDOWS !!! ", -1, &rect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+		{ // zavolá sa alokácia / inicializácia objekut
+			GetClientRect(hwnd, &rect);
+			int difCas = aktualnyCas - startCas;
+			char casBuf[20];
+			wsprintf(casBuf, "%02d:%02d:%02d", difCas / 3600, (difCas % 3600) / 60, (difCas % 3600 % 60)); // funkcia windowsu má výhodu oproti sprintf, je uložená v dll
+			DrawText(hdc, casBuf, -1, &rect, DT_SINGLELINE | DT_VCENTER | DT_CENTER);
+		} // volá sa deštruktor objektu
 		EndPaint(hwnd, &ps);
 		break;
 
+	case WM_TIMER:
+		aktualnyCas = time(nullptr);
+		InvalidateRect(hwnd, nullptr, true);
+		break;
 	case WM_DESTROY:
+		KillTimer(hwnd, 1);
 		PostQuitMessage(0);
 		break;
 	default:
