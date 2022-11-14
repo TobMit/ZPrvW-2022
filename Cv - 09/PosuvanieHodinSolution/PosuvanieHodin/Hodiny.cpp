@@ -52,10 +52,15 @@ int APIENTRY WinMain(HINSTANCE hThisInst, HINSTANCE hPrevInst, PSTR lpszArgs, in
 	ShowWindow(hwnd, nWinMode);        // Zobrazenie okna
 	UpdateWindow(hwnd);
 
+	HACCEL hakceleratory = LoadAccelerators(hThisInst, MAKEINTRESOURCE(IDR_ACCELERATOR1));
+
 	// Slucka sprav
 	while (GetMessage(&msg, NULL, 0, 0)) {
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
+		// keby mám viac tabuliek tak by som ich tam musel uviesť všetky
+		if (hakceleratory && !TranslateAcceleratorA(hwnd, hakceleratory, &msg)) {
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
 	}
 	return msg.wParam;
 }
@@ -98,6 +103,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			EnableMenuItem(hmenu, ID_VPRAVOHORE, MF_ENABLED);
 			EnableMenuItem(hmenu, ID_VPRAVODOLE, MF_ENABLED);
 			pozicia = DT_BOTTOM | DT_LEFT;
+			SetClassLong(hwnd, GCLP_HBRBACKGROUND, (long)RGB(255, 0, 0));
+			InvalidateRect(hwnd, nullptr, true);
 			break;
 		case ID_VLAVOHORE:
 			EnableMenuItem(hmenu, ID_VLAVODOLU, MF_ENABLED);
@@ -105,6 +112,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			EnableMenuItem(hmenu, ID_VPRAVOHORE, MF_ENABLED);
 			EnableMenuItem(hmenu, ID_VPRAVODOLE, MF_ENABLED);
 			pozicia = DT_TOP | DT_LEFT;
+			InvalidateRect(hwnd, nullptr, true);
 			break;
 
 		case ID_VPRAVOHORE:
@@ -113,6 +121,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			EnableMenuItem(hmenu, ID_VPRAVOHORE, MF_DISABLED);
 			EnableMenuItem(hmenu, ID_VPRAVODOLE, MF_ENABLED);
 			pozicia = DT_TOP | DT_RIGHT;
+			InvalidateRect(hwnd, nullptr, true);
 			break;
 
 		case ID_VPRAVODOLE:
@@ -121,6 +130,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			EnableMenuItem(hmenu, ID_VPRAVOHORE, MF_ENABLED);
 			EnableMenuItem(hmenu, ID_VPRAVODOLE, MF_DISABLED);
 			pozicia = DT_BOTTOM | DT_RIGHT;
+			InvalidateRect(hwnd, nullptr, true);
 			break;
 		}
 		break;

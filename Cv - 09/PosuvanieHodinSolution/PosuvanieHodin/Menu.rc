@@ -61,6 +61,22 @@ BEGIN
     END
 END
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_ACCELERATOR1 ACCELERATORS
+BEGIN
+    VK_NUMPAD1,            ID_VPRAVODOLE, VIRTKEY, CONTROL, NOINVERT
+    VK_NUMPAD2,           ID_VLAVODOLU, VIRTKEY, CONTROL, NOINVERT
+    "^R", ID_VPRAVODOLE, ASCII, NOINVERT
+    "^L", ID_VLAVODOLU, ASCII, NOINVERT
+    "^A", ID_VPRAVOHORE, ASCII, NOINVERT
+    "^H", ID_VLAVOHORE, ASCII, NOINVERT
+END
+
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 
