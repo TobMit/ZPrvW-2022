@@ -74,6 +74,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	static time_t startCas, aktualnyCas;
 	static HMENU hmenu;
 	static int pozicia = DT_BOTTOM | DT_RIGHT;
+	static int poziciaY = 0;
+	static int counter = 0;
 
 	switch (message) {
 	case WM_CREATE:
@@ -89,7 +91,22 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			int difCas = aktualnyCas - startCas;
 			char casBuf[20];
 			wsprintf(casBuf, "%02d:%02d:%02d", difCas / 3600, (difCas % 3600) / 60, (difCas % 3600 % 60)); // funkcia windowsu má výhodu oproti sprintf, je uložená v dll
-			DrawText(hdc, casBuf, -1, &rect, DT_SINGLELINE | pozicia);
+			if (pozicia == DT_TOP | DT_LEFT)
+			{
+				if (counter < 3)
+				{
+					counter++;
+				}
+				else {
+					counter = 0;
+					poziciaY += 10;
+				}
+				TextOut(hdc, 0, poziciaY, casBuf, 8);
+
+			}
+			else {
+				DrawText(hdc, casBuf, -1, &rect, DT_SINGLELINE | pozicia);
+			}
 		} // volá sa deštruktor objektu
 		EndPaint(hwnd, &ps);
 		break;
@@ -103,7 +120,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			EnableMenuItem(hmenu, ID_VPRAVOHORE, MF_ENABLED);
 			EnableMenuItem(hmenu, ID_VPRAVODOLE, MF_ENABLED);
 			pozicia = DT_BOTTOM | DT_LEFT;
-			SetClassLong(hwnd, GCLP_HBRBACKGROUND, (long)RGB(255, 0, 0));
+			//SetClassLong(hwnd, GCLP_HBRBACKGROUND, (long)RGB(255, 0, 0));
 			InvalidateRect(hwnd, nullptr, true);
 			break;
 		case ID_VLAVOHORE:
@@ -112,6 +129,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			EnableMenuItem(hmenu, ID_VPRAVOHORE, MF_ENABLED);
 			EnableMenuItem(hmenu, ID_VPRAVODOLE, MF_ENABLED);
 			pozicia = DT_TOP | DT_LEFT;
+			poziciaY = 0;
 			InvalidateRect(hwnd, nullptr, true);
 			break;
 
