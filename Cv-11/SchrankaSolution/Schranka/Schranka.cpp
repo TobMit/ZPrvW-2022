@@ -3,10 +3,13 @@
 #include <windows.h>
 #include <windowsx.h>
 #include "resource.h"
+#include <cstring>
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
 char szWinName[] = "MojeOkno"; 		// Nazov oknovej triedy
+
+void KresliBMP(HDC hdc, int x, int y, int sirka, int vyska, HBITMAP hBitmap);
 
 int APIENTRY WinMain(HINSTANCE hThisInst, HINSTANCE hPrevInst, PSTR lpszArgs, int nWinMode)
 {
@@ -69,13 +72,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	HDC hdc;
 	PAINTSTRUCT ps;
 	RECT	  rect;
-	static bool mamText;
+	static bool mamText, mamBMP;
 	static char* mojeData;
 
 	switch (message) {
 	case WM_CREATE:
-		mamText = 0;
+		mamText = false;
 		mojeData = nullptr;
+		mamBMP = false;
 		break;
 	case WM_PAINT:
 		hdc = BeginPaint(hwnd, &ps);
@@ -96,7 +100,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			HMENU hmenu = GetMenu(hwnd);
 			mamText = IsClipboardFormatAvailable(CF_TEXT); // kontrolujem či sa nachádza text
-			EnableMenuItem(hmenu, ID_EDIT_VLOZ, mamText ? MF_ENABLED : MF_DISABLED);
+			mamBMP = IsClipboardFormatAvailable(CF_BITMAP);
+			EnableMenuItem(hmenu, ID_EDIT_VLOZ, mamText || mamBMP ? MF_ENABLED : MF_DISABLED);
 		}
 		break;
 	case WM_COMMAND:
@@ -107,7 +112,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 		case ID_EDIT_VLOZ:
 			OpenClipboard(hwnd);
-			if (true) // pre istotu ak by som nemal text tak bude zablokovaná
+			if (mamText) // pre istotu ak by som nemal text tak bude zablokovaná
 			{
 				HANDLE hclip = GetClipboardData(CF_TEXT);
 				if (hclip)
@@ -128,11 +133,61 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 					}
 				}
 			}
+			if (mamBMP){
+				HANDLE hclip = GetClipboardData(CF_TEXT);
+				if (hclip) {
+					HBITMAP hBitmap = (HBITMAP)GetClipboardData(CF_BITMAP);
+					if (hBitmap) {
+						HDC hcd = GetDC(hwnd);
+						GetClientRect(hwnd, &rect);
+						KresliBMP(hcd, 0, 0, rect.right, rect.bottom, hBitmap);
+						ReleaseDC(hwnd, hdc);
+					}
+					GlobalUnlock(hclip);
+				}
+			}
+			CloseClipboard();
+			break;
+
+		case ID_EDIT_KOPIRUJ:
+			if (mojeData)
+			{
+				HANDLE hclip = GlobalAlloc(GHND | GMEM_SHARE, lstrlen(mojeData) + 1); // system ju prestane používať, share že to bude zdialať viaceré aplikácie
+				if (hclip) {
+					char* pdata = (char*)GlobalLock(hclip);
+					lstrcpy(pdata, mojeData);
+					strrev(pdata); // otočí data na opak aby sme videli či to funguje
+					GlobalUnlock(hclip);
+					SetClipboardData(CF_TEXT, hclip);
+					CloseClipboard();
+
+				}
+			}
 			break;
 		}
 		break;
 	default:
 		return DefWindowProc(hwnd, message, wParam, lParam);
+
+	
 	}
 	return 0;
+}
+
+void KresliBMP(HDC hdc, int x, int y, int sirka, int vyska, HBITMAP hBitmap) {
+	HDC hMemDC;
+	BITMAP bm;
+	POINT px, py;
+	hMemDC = CreateCompatibleDC(hdc);
+	SelectObject(hMemDC, hBitmap);
+	SetMapMode(hMemDC, GetMapMode(hdc));
+	GetObject(hBitmap, sizeof(BITMAP), &bm);
+	px.x = bm.bmWidth; // toto sa robi kôli konverziam
+	px.y = bm.bmHeight;
+	DPtoLP(hMemDC, &px, 1); //device point to logice point skonvertuje súradnice do pamerovaeho zariadenia
+	py.x = py.y = 0;
+	DPtoLP(hMemDC, &px, 1);
+	//BitBlt(hdc, x, y, px.x, px.y, hMemDC, py.x, py.y, SRCCOPY);
+	StretchBlt(hdc, x, y,sirka, vyska, hMemDC, py.x, py.y,px.x, px.y, SRCCOPY);
+	DeleteDC(hMemDC);
 }
