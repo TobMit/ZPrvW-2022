@@ -10,6 +10,7 @@ LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 char szWinName[] = "MojeOkno"; 		// Nazov oknovej triedy
 
 void KresliBMP(HDC hdc, int x, int y, int sirka, int vyska, HBITMAP hBitmap);
+const int cas = 5;
 
 int APIENTRY WinMain(HINSTANCE hThisInst, HINSTANCE hPrevInst, PSTR lpszArgs, int nWinMode)
 {
@@ -74,12 +75,31 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	RECT	  rect;
 	static bool mamText, mamBMP;
 	static char* mojeData;
+	static int casUplynuty;
 
 	switch (message) {
 	case WM_CREATE:
 		mamText = false;
 		mojeData = nullptr;
 		mamBMP = false;
+		casUplynuty = cas;
+		SetTimer(hwnd, 1, 1000, nullptr);
+		break;
+	case WM_TIMER:
+		if (casUplynuty > 0) {
+			casUplynuty--;
+			if (casUplynuty == 0) {
+				if (MessageBox(hwnd, "Skončiť?", "Dotaz", MB_YESNO | MB_ICONQUESTION) == IDYES) {
+					PostMessage(hwnd, WM_CLOSE, 0, 0);
+				}
+				else {
+					casUplynuty = cas;
+				}
+			}
+		}
+		break;
+	case WM_KEYDOWN:
+		casUplynuty = cas;
 		break;
 	case WM_PAINT:
 		hdc = BeginPaint(hwnd, &ps);
@@ -92,6 +112,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 
 	case WM_DESTROY:
+		KillTimer(hwnd, 1);
 		PostQuitMessage(0);
 		break;
 		// ak nemám text tak bude rozbalovacie menu edit zablokovane
