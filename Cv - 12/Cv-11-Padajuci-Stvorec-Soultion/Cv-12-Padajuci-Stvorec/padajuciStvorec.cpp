@@ -3,6 +3,10 @@
 #include <windows.h>
 #include <windowsx.h>
 #include "resource.h"
+#include <cstdlib>
+#include <ctime>
+
+#define ROZMER_STVORCA 40
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
@@ -64,12 +68,28 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	HDC hdc;
 	PAINTSTRUCT ps;
 	RECT	  rect;
+	static int sirkaKP, vyskaKP;
+	static int poziciaX;
+	static bool klik, start;
 
 	switch (message) {
+	case WM_CREATE:
+		srand(time(NULL));
+		sirkaKP = vyskaKP = 0;
+		klik = true;
+		start = false;
+		break;
+	case WM_SIZE:
+		sirkaKP = LOWORD(lParam);
+		vyskaKP = HIWORD(lParam);
+		break;
 	case WM_PAINT:
 		hdc = BeginPaint(hwnd, &ps);
-		GetClientRect(hwnd, &rect);
-		DrawText(hdc, "AHOJ WINDOWS !!! ", -1, &rect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+		if (start)
+		{
+			poziciaX = rand() % sirkaKP;
+			Rectangle(hdc, poziciaX, 0, ROZMER_STVORCA + poziciaX, ROZMER_STVORCA);
+		}
 		EndPaint(hwnd, &ps);
 		break;
 
@@ -79,6 +99,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 		case ID_PROGRAM_KONIEC:
 			PostMessage(hwnd, WM_CLOSE, 0, 0);
+			break;
+		case ID_PROGRAM_START:
+			start = true;
+			InvalidateRect(hwnd, nullptr, true);
+			break;
+		case ID_PROGRAM_STOP:
+			start = false;
+			InvalidateRect(hwnd, nullptr, true);
+			break;
 			break;
 		default:
 			break;
