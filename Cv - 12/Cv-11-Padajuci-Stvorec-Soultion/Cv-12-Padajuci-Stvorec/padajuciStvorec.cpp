@@ -70,9 +70,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	RECT	  rect;
 	static int sirkaKP, vyskaKP;
 	static int poziciaX, poziciaY;
-	static bool klik[100], start;
+	static bool start;
 	static int body;
+	static int cas;
 	static int stvorce[100][3];
+	static HMENU hmenu;
 
 	switch (message) {
 	case WM_CREATE:
@@ -80,13 +82,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		sirkaKP = vyskaKP = 0;
 		poziciaX = poziciaY = 0;
 		body = 0;
-		for (int i = 0; i < 100; i++)
+		/*for (int i = 0; i < 100; i++)
 		{
 			klik[i] = true;
-		}
+		}*/
 		start = false;
-		SetTimer(hwnd, 1, 16, nullptr);
+		SetTimer(hwnd, 1, 10, nullptr);
 		memset(stvorce, -1, sizeof(stvorce));
+		hmenu = GetMenu(hwnd);
+		cas = 0;
 		break;
 	case WM_SIZE:
 		sirkaKP = LOWORD(lParam);
@@ -98,19 +102,20 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			//dokončenie kažých 5s sa generuje nový štvorec a jeden červený ktorý dáva viac bodov
 			for (int i = 0; i < 100; i++) {
-				if (klik[i])
+				if (stvorce[i][0] != -1)
 				{
-					klik[i] = false;
-					poziciaX = rand() % (sirkaKP - ROZMER_STVORCA);
-					poziciaY = 0;
+					if (poziciaY + ROZMER_STVORCA > vyskaKP)
+					{
+						body--;
+						//klik[i] = true;
+						InvalidateRect(hwnd, nullptr, true);
+						stvorce[i][0] = -1;
+						stvorce[i][1] = -1;
+						stvorce[i][2] = -1;
+					}
+					//Rectangle(hdc, poziciaX, poziciaY, ROZMER_STVORCA + poziciaX, ROZMER_STVORCA + poziciaY);
+					Rectangle(hdc, stvorce[i][0], stvorce[i][1], ROZMER_STVORCA + stvorce[i][0], ROZMER_STVORCA + stvorce[i][1]);
 				}
-				if (poziciaY + ROZMER_STVORCA > vyskaKP)
-				{
-					body--;
-					klik[i] = true;
-					InvalidateRect(hwnd, nullptr, true);
-				}
-				Rectangle(hdc, poziciaX, poziciaY, ROZMER_STVORCA + poziciaX, ROZMER_STVORCA + poziciaY);
 			}
 		}
 		EndPaint(hwnd, &ps);
@@ -126,11 +131,22 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			bool trafil = false;
 			for (int i = 0; i < 100; i++)
 			{
-				if (p.x >= poziciaX && p.x <= poziciaX + ROZMER_STVORCA &&
-					p.y >= poziciaY && p.y <= poziciaY + ROZMER_STVORCA)
+				/*if (p.x >= poziciaX && p.x <= poziciaX + ROZMER_STVORCA &&
+					p.y >= poziciaY && p.y <= poziciaY + ROZMER_STVORCA)*/
+				if (p.x >= stvorce[i][0] && p.x <= stvorce[i][0] + ROZMER_STVORCA &&
+					p.y >= stvorce[i][1] && p.y <= stvorce[i][1] + ROZMER_STVORCA)
 				{
-					klik[i] = true;
-					body++;
+					//klik[i] = true;
+					if (stvorce[i][2] == 1)
+					{
+						body += 5;
+					}
+					else {
+						body++;
+					}
+					stvorce[i][0] = rand() % (sirkaKP - ROZMER_STVORCA);
+					stvorce[i][1] = 0;
+					stvorce[i][2] = -1;
 					InvalidateRect(hwnd, nullptr, true);
 					trafil = true;
 					break;
@@ -145,10 +161,30 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_TIMER:
 		if (start) {
-			poziciaY++;
+			for (int i = 0; i < 100; i++)
+			{
+				if (stvorce[i][0] != -1)
+				{
+					stvorce[i][1]++;
+				}
+			}
+			//poziciaY++;
 			
 			InvalidateRect(hwnd, nullptr, true);
 		}
+		if (cas % 500 == 0) {
+			for (int i = 0; i < 100; i++)
+			{
+				if (stvorce[i][0] == -1) {
+					stvorce[i][0] = rand() % (sirkaKP - ROZMER_STVORCA);
+					stvorce[i][1] = 0;
+					stvorce[i][2] = -1;
+					InvalidateRect(hwnd, nullptr, true);
+					break;
+				}
+			}
+		}
+		cas++;
 		break;
 	case WM_COMMAND:
 		switch (LOWORD(wParam))
@@ -157,10 +193,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			PostMessage(hwnd, WM_CLOSE, 0, 0);
 			break;
 		case ID_PROGRAM_START:
+			EnableMenuItem(hmenu, ID_PROGRAM_START, MF_DISABLED);
+			EnableMenuItem(hmenu, ID_PROGRAM_STOP, MF_ENABLED);
 			start = true;
 			InvalidateRect(hwnd, nullptr, true);
 			break;
 		case ID_PROGRAM_STOP:
+			EnableMenuItem(hmenu, ID_PROGRAM_START, MF_ENABLED);
+			EnableMenuItem(hmenu, ID_PROGRAM_STOP, MF_DISABLED);
 			start = false;
 			InvalidateRect(hwnd, nullptr, true);
 			break;

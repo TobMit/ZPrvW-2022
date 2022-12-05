@@ -55,7 +55,7 @@ BEGIN
     POPUP "Program"
     BEGIN
         MENUITEM "Štart",                       ID_PROGRAM_START
-        MENUITEM "Stop",                        ID_PROGRAM_STOP
+        MENUITEM "Stop",                        ID_PROGRAM_STOP, INACTIVE
         MENUITEM "Koniec",                      ID_PROGRAM_KONIEC
     END
 END
