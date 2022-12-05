@@ -211,14 +211,20 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			EnableMenuItem(hmenu, ID_PROGRAM_START, MF_DISABLED);
 			EnableMenuItem(hmenu, ID_PROGRAM_STOP, MF_ENABLED);
 			start = true;
+			body = 0;
 			InvalidateRect(hwnd, nullptr, true);
 			break;
 		case ID_PROGRAM_STOP:
 			EnableMenuItem(hmenu, ID_PROGRAM_START, MF_ENABLED);
 			EnableMenuItem(hmenu, ID_PROGRAM_STOP, MF_DISABLED);
 			start = false;
+			for (int i = 0; i < 100; i++)
+			{
+				stvorce[i][0] = -1;
+				stvorce[i][1] = -1;
+				stvorce[i][2] = -1;
+			}
 			InvalidateRect(hwnd, nullptr, true);
-			break;
 			break;
 		default:
 			break;
