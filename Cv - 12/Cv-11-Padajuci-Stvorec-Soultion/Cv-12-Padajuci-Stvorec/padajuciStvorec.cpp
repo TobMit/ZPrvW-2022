@@ -104,7 +104,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			for (int i = 0; i < 100; i++) {
 				if (stvorce[i][0] != -1)
 				{
-					if (poziciaY + ROZMER_STVORCA > vyskaKP)
+					if (stvorce[i][1] + ROZMER_STVORCA > vyskaKP)
 					{
 						body--;
 						//klik[i] = true;
@@ -116,7 +116,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 					//Rectangle(hdc, poziciaX, poziciaY, ROZMER_STVORCA + poziciaX, ROZMER_STVORCA + poziciaY);
 
 					Rectangle(hdc, stvorce[i][0], stvorce[i][1], ROZMER_STVORCA + stvorce[i][0], ROZMER_STVORCA + stvorce[i][1]);
-					
+					if (stvorce[i][2] == 1)
+					{
+						HBRUSH redBrush = CreateSolidBrush(RGB(255, 0, 0));
+						HBRUSH oldBrush = (HBRUSH)SelectObject(hdc, redBrush);
+;						SetRect(&rect, stvorce[i][0], stvorce[i][1], ROZMER_STVORCA + stvorce[i][0], ROZMER_STVORCA + stvorce[i][1]);
+						FillRect(hdc, &rect, redBrush);
+						SelectObject(hdc, oldBrush);
+					}
 				}
 			}
 		}
