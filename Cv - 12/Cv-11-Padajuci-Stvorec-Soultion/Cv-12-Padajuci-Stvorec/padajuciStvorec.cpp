@@ -114,7 +114,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 						stvorce[i][2] = -1;
 					}
 					//Rectangle(hdc, poziciaX, poziciaY, ROZMER_STVORCA + poziciaX, ROZMER_STVORCA + poziciaY);
+
 					Rectangle(hdc, stvorce[i][0], stvorce[i][1], ROZMER_STVORCA + stvorce[i][0], ROZMER_STVORCA + stvorce[i][1]);
+					
 				}
 			}
 		}
@@ -146,7 +148,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 					}
 					stvorce[i][0] = rand() % (sirkaKP - ROZMER_STVORCA);
 					stvorce[i][1] = 0;
-					stvorce[i][2] = -1;
+					if (rand()%10 == 0)
+					{
+						stvorce[i][2] = 1;
+					}
+					else {
+						stvorce[i][2] = -1;
+					}
 					InvalidateRect(hwnd, nullptr, true);
 					trafil = true;
 					break;
