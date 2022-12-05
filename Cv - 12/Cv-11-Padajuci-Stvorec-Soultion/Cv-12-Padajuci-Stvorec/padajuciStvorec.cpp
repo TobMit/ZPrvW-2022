@@ -2,6 +2,7 @@
 
 #include <windows.h>
 #include <windowsx.h>
+#include "resource.h"
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
@@ -23,7 +24,7 @@ int APIENTRY WinMain(HINSTANCE hThisInst, HINSTANCE hPrevInst, PSTR lpszArgs, in
 	wndclass.hIconSm = 0; 		// Druh malej ikony
 
 	wndclass.hCursor = LoadCursor(NULL, IDC_ARROW);     // Druh kurzora
-	wndclass.lpszMenuName = NULL;                            // Ziadne menu
+	wndclass.lpszMenuName = MAKEINTRESOURCE(IDR_MENU1);                            // Ziadne menu
 
 	wndclass.cbClsExtra = 0;          	// nie su potrebne
 	wndclass.cbWndExtra = 0;          	// ziadne extra informacie
@@ -72,6 +73,17 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		EndPaint(hwnd, &ps);
 		break;
 
+
+	case WM_COMMAND:
+		switch (LOWORD(wParam))
+		{
+		case ID_PROGRAM_KONIEC:
+			PostMessage(hwnd, WM_CLOSE, 0, 0);
+			break;
+		default:
+			break;
+		}
+		break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
