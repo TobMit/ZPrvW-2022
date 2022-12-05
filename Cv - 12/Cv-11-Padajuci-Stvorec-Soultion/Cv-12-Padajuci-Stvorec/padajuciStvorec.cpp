@@ -69,13 +69,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	PAINTSTRUCT ps;
 	RECT	  rect;
 	static int sirkaKP, vyskaKP;
-	static int poziciaX;
+	static int poziciaX, poziciaY;
 	static bool klik, start;
 
 	switch (message) {
 	case WM_CREATE:
 		srand(time(NULL));
 		sirkaKP = vyskaKP = 0;
+		poziciaX = poziciaY = 0;
 		klik = true;
 		start = false;
 		break;
@@ -87,13 +88,26 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		hdc = BeginPaint(hwnd, &ps);
 		if (start)
 		{
-			poziciaX = rand() % sirkaKP;
-			Rectangle(hdc, poziciaX, 0, ROZMER_STVORCA + poziciaX, ROZMER_STVORCA);
+			if (klik)
+			{
+				klik = false;
+				poziciaX = rand() % (sirkaKP - ROZMER_STVORCA);
+			}
+			Rectangle(hdc, poziciaX, poziciaY, ROZMER_STVORCA + poziciaX, ROZMER_STVORCA) + poziciaY;
 		}
 		EndPaint(hwnd, &ps);
 		break;
-
-
+	case WM_LBUTTONDOWN:
+		POINT p;
+		p.x = GET_X_LPARAM(lParam);
+		p.y = GET_Y_LPARAM(lParam);
+		if (p.x >= poziciaX && p.x <= poziciaX + ROZMER_STVORCA &&
+			p.y >= poziciaY && p.y <= poziciaY + ROZMER_STVORCA)
+		{
+			klik = true;
+			InvalidateRect(hwnd, nullptr, true);
+		}
+		break;
 	case WM_COMMAND:
 		switch (LOWORD(wParam))
 		{
@@ -102,6 +116,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 		case ID_PROGRAM_START:
 			start = true;
+			klik = true;
 			InvalidateRect(hwnd, nullptr, true);
 			break;
 		case ID_PROGRAM_STOP:
