@@ -1,4 +1,4 @@
-// Zakladna aplikacia
+﻿// Zakladna aplikacia
 
 #include <windows.h>
 #include <windowsx.h>
@@ -70,8 +70,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	RECT	  rect;
 	static int sirkaKP, vyskaKP;
 	static int poziciaX, poziciaY;
-	static bool klik, start;
+	static bool klik[100], start;
 	static int body;
+	static int stvorce[100][3];
 
 	switch (message) {
 	case WM_CREATE:
@@ -79,9 +80,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		sirkaKP = vyskaKP = 0;
 		poziciaX = poziciaY = 0;
 		body = 0;
-		klik = true;
+		for (int i = 0; i < 100; i++)
+		{
+			klik[i] = true;
+		}
 		start = false;
 		SetTimer(hwnd, 1, 16, nullptr);
+		memset(stvorce, -1, sizeof(stvorce));
 		break;
 	case WM_SIZE:
 		sirkaKP = LOWORD(lParam);
@@ -91,19 +96,22 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		hdc = BeginPaint(hwnd, &ps);
 		if (start)
 		{
-			if (klik)
-			{
-				klik = false;
-				poziciaX = rand() % (sirkaKP - ROZMER_STVORCA);
-				poziciaY = 0;
+			//dokončenie kažých 5s sa generuje nový štvorec a jeden červený ktorý dáva viac bodov
+			for (int i = 0; i < 100; i++) {
+				if (klik[i])
+				{
+					klik[i] = false;
+					poziciaX = rand() % (sirkaKP - ROZMER_STVORCA);
+					poziciaY = 0;
+				}
+				if (poziciaY + ROZMER_STVORCA > vyskaKP)
+				{
+					body--;
+					klik[i] = true;
+					InvalidateRect(hwnd, nullptr, true);
+				}
+				Rectangle(hdc, poziciaX, poziciaY, ROZMER_STVORCA + poziciaX, ROZMER_STVORCA + poziciaY);
 			}
-			if (poziciaY + ROZMER_STVORCA > vyskaKP)
-			{
-				body--;
-				klik = true;
-				InvalidateRect(hwnd, nullptr, true);
-			}
-			Rectangle(hdc, poziciaX, poziciaY, ROZMER_STVORCA + poziciaX, ROZMER_STVORCA + poziciaY);
 		}
 		EndPaint(hwnd, &ps);
 		char buf[20];
@@ -114,16 +122,25 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		POINT p;
 		p.x = GET_X_LPARAM(lParam);
 		p.y = GET_Y_LPARAM(lParam);
-		if (p.x >= poziciaX && p.x <= poziciaX + ROZMER_STVORCA &&
-			p.y >= poziciaY && p.y <= poziciaY + ROZMER_STVORCA)
 		{
-			klik = true;
-			body++;
-			InvalidateRect(hwnd, nullptr, true);
-		}
-		else
-		{
-			body--;
+			bool trafil = false;
+			for (int i = 0; i < 100; i++)
+			{
+				if (p.x >= poziciaX && p.x <= poziciaX + ROZMER_STVORCA &&
+					p.y >= poziciaY && p.y <= poziciaY + ROZMER_STVORCA)
+				{
+					klik[i] = true;
+					body++;
+					InvalidateRect(hwnd, nullptr, true);
+					trafil = true;
+					break;
+				}
+			}
+
+			if (!trafil)
+			{
+				body--;
+			}
 		}
 		break;
 	case WM_TIMER:
@@ -141,7 +158,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 		case ID_PROGRAM_START:
 			start = true;
-			klik = true;
 			InvalidateRect(hwnd, nullptr, true);
 			break;
 		case ID_PROGRAM_STOP:
