@@ -71,14 +71,17 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	static int sirkaKP, vyskaKP;
 	static int poziciaX, poziciaY;
 	static bool klik, start;
+	static int body;
 
 	switch (message) {
 	case WM_CREATE:
 		srand(time(NULL));
 		sirkaKP = vyskaKP = 0;
 		poziciaX = poziciaY = 0;
+		body = 0;
 		klik = true;
 		start = false;
+		SetTimer(hwnd, 1, 16, nullptr);
 		break;
 	case WM_SIZE:
 		sirkaKP = LOWORD(lParam);
@@ -92,10 +95,20 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			{
 				klik = false;
 				poziciaX = rand() % (sirkaKP - ROZMER_STVORCA);
+				poziciaY = 0;
 			}
-			Rectangle(hdc, poziciaX, poziciaY, ROZMER_STVORCA + poziciaX, ROZMER_STVORCA) + poziciaY;
+			if (poziciaY + ROZMER_STVORCA > vyskaKP)
+			{
+				body--;
+				klik = true;
+				InvalidateRect(hwnd, nullptr, true);
+			}
+			Rectangle(hdc, poziciaX, poziciaY, ROZMER_STVORCA + poziciaX, ROZMER_STVORCA + poziciaY);
 		}
 		EndPaint(hwnd, &ps);
+		char buf[20];
+		wsprintf(buf, "Hra: %db", body);
+		SetWindowText(hwnd, buf);
 		break;
 	case WM_LBUTTONDOWN:
 		POINT p;
@@ -105,6 +118,18 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			p.y >= poziciaY && p.y <= poziciaY + ROZMER_STVORCA)
 		{
 			klik = true;
+			body++;
+			InvalidateRect(hwnd, nullptr, true);
+		}
+		else
+		{
+			body--;
+		}
+		break;
+	case WM_TIMER:
+		if (start) {
+			poziciaY++;
+			
 			InvalidateRect(hwnd, nullptr, true);
 		}
 		break;
@@ -129,6 +154,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	case WM_DESTROY:
+		KillTimer(hwnd, 1);
 		PostQuitMessage(0);
 		break;
 	default:
