@@ -67,15 +67,41 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	PAINTSTRUCT ps;
 	RECT	  rect;
 	static HMENU hmenu;
+	static int sirkaKP, vyskaKP;
 
 	switch (message) {
 	case WM_CREATE:
 		hmenu = GetMenu(hwnd);
+		sirkaKP = 0;
+		vyskaKP = 0;
+		break;
+	case WM_SIZE:
+		sirkaKP = LOWORD(lParam);
+		vyskaKP = HIWORD(lParam);
+		InvalidateRect(hwnd, nullptr, true);
 		break;
 	case WM_PAINT:
 		hdc = BeginPaint(hwnd, &ps);
-		GetClientRect(hwnd, &rect);
-		DrawText(hdc, "AHOJ WINDOWS !!! ", -1, &rect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+		{
+			int staryRezim = SetROP2(hdc, R2_XORPEN);
+			HPEN pero = CreatePen(PS_SOLID, 1, RGB(250, 250, 250));
+			HPEN starePero = (HPEN)SelectObject(hdc, pero);
+			for (int x = 0; x < sirkaKP;)
+			{
+				MoveToEx(hdc, x, 0, nullptr);
+				LineTo(hdc, x, vyskaKP);
+				x += sirkaKP / 30;
+			}
+			for (int y = 0; y < vyskaKP;)
+			{
+				MoveToEx(hdc, 0, y, nullptr);
+				LineTo(hdc, sirkaKP, y);
+				y += vyskaKP / 30;
+			}
+			SelectObject(hdc, starePero);
+			DeleteObject(pero);
+			SetROP2(hdc, staryRezim);
+		}
 		EndPaint(hwnd, &ps);
 		break;
 	case WM_COMMAND:
@@ -84,7 +110,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case ID_PROGRAM_START:
 			EnableMenuItem(hmenu, ID_PROGRAM_START, MF_DISABLED);
 			EnableMenuItem(hmenu, ID_PROGRAM_STOP, MF_ENABLED);
-			PostMessage(hwnd, WM_CLOSE, 0, 0);
 			break;
 		case ID_PROGRAM_STOP:
 			EnableMenuItem(hmenu, ID_PROGRAM_START, MF_ENABLED);
