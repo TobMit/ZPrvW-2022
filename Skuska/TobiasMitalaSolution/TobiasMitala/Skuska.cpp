@@ -9,7 +9,6 @@ LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
 char szWinName[] = "MojeOkno"; 		// Nazov oknovej triedy
 
-void nakresliStvorce(HDC hdc, int x, int y, int sirka, int vyska, RECT &rect);
 
 int APIENTRY WinMain(HINSTANCE hThisInst, HINSTANCE hPrevInst, PSTR lpszArgs, int nWinMode)
 {
@@ -39,7 +38,7 @@ int APIENTRY WinMain(HINSTANCE hThisInst, HINSTANCE hPrevInst, PSTR lpszArgs, in
 	hwnd = CreateWindowEx(
 		WS_EX_ACCEPTFILES,
 		szWinName,           // Nazov oknovej triedy
-		"Windows - zakladny program",  // Titulok okna
+		"Skuska",  // Titulok okna
 		WS_OVERLAPPEDWINDOW, // Styl okna
 		CW_USEDEFAULT,       // Pociatocna x-poloha
 		CW_USEDEFAULT,       // Pociatocna y-poloha
@@ -57,6 +56,7 @@ int APIENTRY WinMain(HINSTANCE hThisInst, HINSTANCE hPrevInst, PSTR lpszArgs, in
 	// Slucka sprav
 	while (GetMessage(&msg, NULL, 0, 0)) {
 		if (hAkceleratory && !TranslateAcceleratorA(hwnd, hAkceleratory, &msg)) {
+			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
 	}
@@ -133,12 +133,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			hdc = GetDC(hwnd);
 			HBRUSH farebnyBrush = CreateSolidBrush(RGB(rand() % 256, rand() % 256, rand() % 256));
 			HBRUSH oldBrush = (HBRUSH)SelectObject(hdc, farebnyBrush);
-			int x = rand() % (sirkaKP /30);
-			int y = rand() % (vyskaKP/30);
+			int x = rand() % sirkaKP;
+			int y = rand() % vyskaKP;
 			int vyska = vyskaKP / 30;
 			int sirka = sirkaKP / 30;
 			//Rectangle(hdc, x, y, x + sirka, y + vyska);
-			SetRect(&rect, x * sirka, y * vyska, x * sirka + sirka, y * vyska + vyska);
+			SetRect(&rect, x /30 * sirka, y /30 * vyska, x/30 * sirka + sirka, y/30 * vyska + vyska);
 			FillRect(hdc, &rect, farebnyBrush);
 			SelectObject(hdc, oldBrush);
 			//EndPaint(hwnd, &ps);
@@ -156,7 +156,3 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-void nakresliStvorce(HDC hdc, int x, int y, int sirka, int vyska, RECT &rect)
-{
-	
-}
