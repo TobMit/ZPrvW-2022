@@ -66,15 +66,37 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	HDC hdc;
 	PAINTSTRUCT ps;
 	RECT	  rect;
+	static HMENU hmenu;
 
 	switch (message) {
+	case WM_CREATE:
+		hmenu = GetMenu(hwnd);
+		break;
 	case WM_PAINT:
 		hdc = BeginPaint(hwnd, &ps);
 		GetClientRect(hwnd, &rect);
 		DrawText(hdc, "AHOJ WINDOWS !!! ", -1, &rect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
 		EndPaint(hwnd, &ps);
 		break;
-
+	case WM_COMMAND:
+		switch (LOWORD(wParam))
+		{
+		case ID_PROGRAM_START:
+			EnableMenuItem(hmenu, ID_PROGRAM_START, MF_DISABLED);
+			EnableMenuItem(hmenu, ID_PROGRAM_STOP, MF_ENABLED);
+			PostMessage(hwnd, WM_CLOSE, 0, 0);
+			break;
+		case ID_PROGRAM_STOP:
+			EnableMenuItem(hmenu, ID_PROGRAM_START, MF_ENABLED);
+			EnableMenuItem(hmenu, ID_PROGRAM_STOP, MF_DISABLED);
+			break;
+		case ID_PROGRAM_KONIEC:
+			PostMessage(hwnd, WM_CLOSE, 0, 0);
+			break;
+		default:
+			break;
+		}
+		break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;

@@ -68,7 +68,7 @@ END
 
 IDR_ACCELERATOR1 ACCELERATORS
 BEGIN
-    "^C",           ID_PROGRAM_START,       ASCII,  NOINVERT
+    "^S",           ID_PROGRAM_START,       ASCII,  NOINVERT
     "^P",           ID_PROGRAM_STOP,        ASCII,  NOINVERT
 END
 
